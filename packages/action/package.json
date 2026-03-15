@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json && npm run bundle",
-    "bundle": "node --input-type=module --eval \"import { build } from 'esbuild'; build({ entryPoints: ['dist/main.js'], bundle: true, platform: 'node', target: 'node20', outfile: 'action.js', format: 'esm' })\"",
+    "bundle": "node --input-type=module --eval \"import { build } from 'esbuild'; build({ entryPoints: ['dist/main.js'], bundle: true, platform: 'node', target: 'node24', outfile: 'action.js', format: 'esm' })\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "prepublishOnly": "npm run build",
     "clean": "rm -rf dist action.js"
