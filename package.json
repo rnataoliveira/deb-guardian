@@ -7,11 +7,11 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build -w packages/core && npm run build -w packages/cli && npm run build -w packages/action",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "clean": "find packages -name dist -type d -exec rm -rf {} + 2>/dev/null; true"
+    "clean": "find packages -name dist -type d -exec rm -rf {} + 2>/dev/null; find packages -name '*.tsbuildinfo' -exec rm -f {} + 2>/dev/null; true"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
