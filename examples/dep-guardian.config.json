@@ -1,0 +1,29 @@
+{
+  "repo": "your-org/your-repo",
+  "baseBranch": "main",
+  "sources": [
+    "dependabot",
+    "codeql",
+    "npm-audit",
+    "secret-scanning"
+  ],
+  "majorBumpMode": "issue",
+  "validate": [
+    "lint",
+    "typecheck",
+    "build",
+    "test"
+  ],
+  "scripts": {
+    "lint": "npm run lint",
+    "typecheck": "npm run typecheck",
+    "build": "npm run build",
+    "test": "npm run test"
+  },
+  "protected": [
+    "react",
+    "react-dom",
+    "next"
+  ],
+  "maxAlerts": 50
+}

@@ -1,0 +1,57 @@
+name: 'dep-guardian'
+description: 'Automated dependency security fixer — fixes Dependabot, CodeQL, Secret Scanning, and npm audit vulnerabilities'
+author: 'rnataoliveira'
+
+branding:
+  icon: 'shield'
+  color: 'green'
+
+inputs:
+  github-token:
+    description: 'GitHub token with repo, pull-requests, issues, and security-events permissions'
+    required: true
+    default: ${{ github.token }}
+  repo:
+    description: 'Repository in owner/repo format (default: current repo)'
+    required: false
+    default: ${{ github.repository }}
+  path:
+    description: 'Path to the repository checkout'
+    required: false
+    default: ${{ github.workspace }}
+  dry-run:
+    description: 'Plan fixes without making changes or creating PRs'
+    required: false
+    default: 'false'
+  major-bump-mode:
+    description: 'What to do with major version bumps: issue | pr | skip'
+    required: false
+    default: 'issue'
+  sources:
+    description: 'Comma-separated alert sources: dependabot,codeql,npm-audit,secret-scanning'
+    required: false
+    default: 'dependabot,codeql,npm-audit,secret-scanning'
+  validate:
+    description: 'Comma-separated validation steps: lint,typecheck,build,test'
+    required: false
+    default: 'lint,typecheck,build,test'
+  protected:
+    description: 'Comma-separated packages to never auto-fix'
+    required: false
+    default: ''
+  base-branch:
+    description: 'Base branch for PRs (default: repo default branch)'
+    required: false
+    default: ''
+
+outputs:
+  fixes-applied:
+    description: 'Number of vulnerabilities fixed'
+  pr-url:
+    description: 'URL of the created pull request (if any)'
+  issues-created:
+    description: 'Comma-separated URLs of issues created for major bumps'
+
+runs:
+  using: 'node20'
+  main: 'action.js'

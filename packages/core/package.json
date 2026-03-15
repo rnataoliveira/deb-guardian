@@ -1,0 +1,30 @@
+{
+  "name": "@dep-guardian/core",
+  "version": "0.1.0",
+  "description": "Core engine for dep-guardian",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@octokit/rest": "^21.0.0",
+    "@octokit/plugin-retry": "^7.0.0",
+    "@octokit/plugin-throttling": "^9.0.0",
+    "semver": "^7.6.0",
+    "pacote": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/semver": "^7.5.0",
+    "@types/pacote": "^11.1.0"
+  }
+}

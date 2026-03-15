@@ -1,0 +1,21 @@
+{
+  "name": "@dep-guardian/action",
+  "version": "0.1.0",
+  "description": "GitHub Action for dep-guardian",
+  "type": "module",
+  "main": "./dist/main.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && npm run bundle",
+    "bundle": "node --input-type=module --eval \"import { build } from 'esbuild'; build({ entryPoints: ['dist/main.js'], bundle: true, platform: 'node', target: 'node20', outfile: 'action.js', format: 'esm' })\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist action.js"
+  },
+  "dependencies": {
+    "@dep-guardian/core": "*",
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^6.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}

@@ -1,0 +1,67 @@
+name: dep-guardian
+
+on:
+  schedule:
+    # Every Monday at 09:00 UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (plan only, no changes)'
+        type: boolean
+        default: false
+      sources:
+        description: 'Alert sources (comma-separated)'
+        type: string
+        default: 'dependabot,codeql,npm-audit,secret-scanning'
+      major_bump_mode:
+        description: 'Major bump handling'
+        type: choice
+        default: issue
+        options:
+          - issue
+          - pr
+          - skip
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  security-events: read
+
+jobs:
+  dep-guardian:
+    name: Fix security vulnerabilities
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure git
+        run: |
+          git config user.name "dep-guardian[bot]"
+          git config user.email "dep-guardian[bot]@users.noreply.github.com"
+
+      - name: Run dep-guardian
+        uses: ./packages/action
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+          path: ${{ github.workspace }}
+          dry-run: ${{ inputs.dry_run || 'false' }}
+          major-bump-mode: ${{ inputs.major_bump_mode || 'issue' }}
+          sources: ${{ inputs.sources || 'dependabot,codeql,npm-audit,secret-scanning' }}
+          validate: 'lint,typecheck,build,test'
