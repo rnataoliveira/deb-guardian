@@ -1,8 +1,7 @@
 {
   "name": "@rntpkgs/dep-guardian-action",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "GitHub Action for dep-guardian",
-  "type": "module",
   "main": "./dist/main.js",
   "files": [
     "dist",
@@ -11,7 +10,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json && npm run bundle",
-    "bundle": "node --input-type=module --eval \"import { build } from 'esbuild'; build({ entryPoints: ['dist/main.js'], bundle: true, platform: 'node', target: 'node24', outfile: 'action.js', format: 'esm' })\"",
+    "bundle": "node --input-type=module --eval \"import { build } from 'esbuild'; build({ entryPoints: ['dist/main.js'], bundle: true, platform: 'node', target: 'node24', outfile: 'action.js', format: 'cjs', conditions: ['import'] })\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "prepublishOnly": "npm run build",
     "clean": "rm -rf dist action.js"

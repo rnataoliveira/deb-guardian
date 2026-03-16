@@ -1,5 +1,7 @@
-import * as core from '@actions/core';
-import { run, buildConfig } from '@rntpkgs/dep-guardian-core';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const core = require("@actions/core");
+const dep_guardian_core_1 = require("@rntpkgs/dep-guardian-core");
 function parseValidationSteps(input) {
     const valid = ['lint', 'typecheck', 'build', 'test'];
     return input
@@ -79,7 +81,7 @@ async function main() {
         const validateInput = core.getInput('validate') || 'lint,typecheck,build,test';
         const protectedInput = core.getInput('protected');
         const baseBranch = core.getInput('base-branch');
-        const config = buildConfig({
+        const config = (0, dep_guardian_core_1.buildConfig)({
             repo: repo || undefined,
             repoPath,
             token,
@@ -94,7 +96,7 @@ async function main() {
         if (baseBranch)
             config.baseBranch = baseBranch;
         core.startGroup('dep-guardian run');
-        const summary = await run(config, handleProgress);
+        const summary = await (0, dep_guardian_core_1.run)(config, handleProgress);
         core.endGroup();
         // Set outputs
         core.setOutput('fixes-applied', String(summary.fixesApplied));
