@@ -1,6 +1,6 @@
 {
   "name": "@rntpkgs/dep-guardian-action",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "GitHub Action for dep-guardian",
   "type": "module",
   "main": "./dist/main.js",
@@ -30,7 +30,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rnataoliveira/deb-guardian.git",
+    "url": "git+https://github.com/rnataoliveira/dep-guardian.git",
     "directory": "packages/action"
   },
   "publishConfig": {
