@@ -1,6 +1,6 @@
 {
   "name": "@rntpkgs/dep-guardian",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Automated npm security fixer — fixes Dependabot, CodeQL, Secret Scanning vulnerabilities with real dependency updates",
   "type": "module",
   "bin": {

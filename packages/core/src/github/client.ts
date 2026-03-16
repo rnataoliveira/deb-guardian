@@ -197,6 +197,34 @@ export interface CreateIssueParams {
   labels?: string[];
 }
 
+/**
+ * Find an existing open dep-guardian issue for a given package.
+ * Searches by label + package name in title to prevent duplicates across runs.
+ */
+export async function findExistingDepGuardianIssue(
+  octokit: Octokit,
+  repo: string,
+  packageName: string
+): Promise<{ number: number; url: string } | null> {
+  const { owner, repoName } = parseOwnerRepo(repo);
+  try {
+    const { data } = await octokit.rest.issues.listForRepo({
+      owner,
+      repo: repoName,
+      state: 'open',
+      labels: 'dep-guardian',
+      per_page: 100,
+    });
+    const match = data.find((issue) =>
+      issue.title.includes(`update ${packageName}`) ||
+      issue.title.includes(`update ${packageName} `)
+    );
+    return match ? { number: match.number, url: match.html_url } : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function createIssue(
   octokit: Octokit,
   params: CreateIssueParams

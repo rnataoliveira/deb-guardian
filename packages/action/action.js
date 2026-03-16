@@ -25385,6 +25385,22 @@ async function fetchSecretScanningAlerts(octokit, repo) {
   }
   return results;
 }
+async function findExistingDepGuardianIssue(octokit, repo, packageName) {
+  const { owner, repoName } = parseOwnerRepo(repo);
+  try {
+    const { data } = await octokit.rest.issues.listForRepo({
+      owner,
+      repo: repoName,
+      state: "open",
+      labels: "dep-guardian",
+      per_page: 100
+    });
+    const match = data.find((issue) => issue.title.includes(`update ${packageName}`) || issue.title.includes(`update ${packageName} `));
+    return match ? { number: match.number, url: match.html_url } : null;
+  } catch {
+    return null;
+  }
+}
 async function createIssue(octokit, params) {
   const { owner, repoName } = parseOwnerRepo(params.repo);
   const response = await octokit.rest.issues.create({
@@ -28795,6 +28811,12 @@ async function run(config, onProgress) {
   }
   if (majorChanges.length > 0 && config.majorBumpMode !== "skip" && !config.dryRun) {
     for (const strategy of majorChanges) {
+      const packageName = strategy.targetPackage ?? strategy.alert.packageName ?? "";
+      const existing = await findExistingDepGuardianIssue(octokit, config.repo, packageName);
+      if (existing) {
+        createdIssues.push({ kind: "major-bump-issue", number: existing.number, url: existing.url, title: buildMajorBumpIssueTitle(strategy) });
+        continue;
+      }
       emit({ type: "creating-issue", title: buildMajorBumpIssueTitle(strategy) });
       const issueBody = buildMajorBumpIssueBody(strategy);
       const issue = await createIssue(octokit, {

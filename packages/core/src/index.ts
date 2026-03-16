@@ -7,7 +7,7 @@ import type {
   SecretFinding,
   AnalysedAlert,
 } from './types.js';
-import { createOctokit, fetchDependabotAlerts, fetchCodeQLAlerts, fetchSecretScanningAlerts, createPr, createIssue, getDefaultBranch } from './github/client.js';
+import { createOctokit, fetchDependabotAlerts, fetchCodeQLAlerts, fetchSecretScanningAlerts, createPr, createIssue, findExistingDepGuardianIssue, getDefaultBranch } from './github/client.js';
 import { runNpmAudit } from './analyzers/npm-audit.js';
 import { buildDepGraph, buildDepGraphFromNpmLs } from './resolvers/transitive-tracer.js';
 import { deduplicateAlerts, buildFixStrategies } from './resolvers/strategy.js';
@@ -276,9 +276,18 @@ export async function run(
     emit({ type: 'pr-created', url: pr.url, number: pr.number });
   }
 
-  // ── 8. Create issues for major bumps
+  // ── 8. Create issues for major bumps (skip if one already exists for the package)
   if (majorChanges.length > 0 && config.majorBumpMode !== 'skip' && !config.dryRun) {
     for (const strategy of majorChanges) {
+      const packageName = strategy.targetPackage ?? strategy.alert.packageName ?? '';
+
+      // Deduplication: skip if an open dep-guardian issue already exists for this package
+      const existing = await findExistingDepGuardianIssue(octokit, config.repo, packageName);
+      if (existing) {
+        createdIssues.push({ kind: 'major-bump-issue', number: existing.number, url: existing.url, title: buildMajorBumpIssueTitle(strategy) });
+        continue;
+      }
+
       emit({ type: 'creating-issue', title: buildMajorBumpIssueTitle(strategy) });
       const issueBody = buildMajorBumpIssueBody(strategy);
       const issue = await createIssue(octokit, {
