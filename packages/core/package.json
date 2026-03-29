@@ -1,6 +1,6 @@
 {
   "name": "@rntpkgs/dep-guardian-core",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Core engine for dep-guardian — automated npm security fixer",
   "type": "module",
   "main": "./dist/index.js",
